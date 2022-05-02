@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useMemo } from 'react'
-import { Modal, TextField, Box, InputLabel, Select, MenuItem, FormControl, Button } from '@mui/material'
+import { Modal, Drawer, TextField, Box, InputLabel, Select, MenuItem, FormControl, Button } from '@mui/material'
 import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -9,13 +9,9 @@ import { toast } from 'react-toastify';
 
 const API = process.env.NEXT_PUBLIC_API
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',  
-  width: "500px",
-  height: "500px",
+const style = {  
+  width: "100%",
+  height: "100%",
   bgcolor: 'background.paper',
   borderRadius: '4px',
   overflow: 'auto',
@@ -29,6 +25,7 @@ const flexColum = {
   flexDirection: 'column',
   alignItems: 'center',
   height: '100%',
+  width: '300px',
   gap: '1rem',
   padding: '0.25rem',
 }
@@ -85,9 +82,11 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData }) => {
   }
 
   return (
-    <Modal
+    <Drawer
       open={open}
       onClose={handleClose}
+      anchor="right"
+
     >
         <Box sx={{ ...style }}> 
           <form style={{
@@ -242,7 +241,7 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData }) => {
           </form>
         </Box>
 
-    </Modal>
+    </Drawer>
     
   )
 }
