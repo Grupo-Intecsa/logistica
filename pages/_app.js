@@ -4,7 +4,7 @@ import Layout from '../Components/Layout';
 import { SWRConfig } from 'swr'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import 'dayjs/locale/es'
+import 'dayjs/locale/es-mx'
 
 const theme = createTheme({
   typography: {

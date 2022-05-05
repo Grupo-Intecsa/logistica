@@ -5,7 +5,7 @@ import NewDocument from '../Components/Modal/NewDocument';
 import { useRouter } from 'next/router'
 import dayjs from 'dayjs';
 
-function Empresa({ empresa, documents }){
+function Empresa({ empresa, documents, vehicles }){
   
   const columns = [
     {
@@ -38,6 +38,11 @@ function Empresa({ empresa, documents }){
     {
       field: 'driver',
       headerName: 'Conductor',
+      width: 200,
+    },
+    {
+      field: 'vehicle',
+      headerName: 'Vehiculo',
       width: 200,
     },
     {
@@ -86,7 +91,20 @@ function Empresa({ empresa, documents }){
       }
     })
     : []
-    return [...traslados, ...fletes]
+
+    const rentas = documents.rentas.length !== 0
+    ? documents.rentas.map(document => {
+      return {
+        ...document,
+        id: document._id,
+        type: 'Renta',
+        request_date: dayjs(document.request_date).format('YYYY-MM-DD'),
+        delivery_date: dayjs(document.delivery_date).format('YYYY-MM-DD'),
+      }
+    })
+    : []
+
+    return [...traslados, ...fletes, ...rentas]
   }
 
   const folioCount = () => {
@@ -98,9 +116,14 @@ function Empresa({ empresa, documents }){
     ? documents.fletes.length
     : 0
 
+    const renta = documents.rentas.length !== 0
+    ? documents.rentas.length
+    : 0    
+
     return {
       traslado,
       flete,
+      renta
     }
   }
 
@@ -115,10 +138,10 @@ function Empresa({ empresa, documents }){
   return (
   <>
     <Typography variant='h3' sx={{ margin: '2.5rem 0', fontWeight: '500' }}>      
-      Traslados y Fletes
-    </Typography>
+      { empresa }      
+    </Typography>    
     <Typography>
-      { empresa }
+      Rentas, Traslados y Fletes
     </Typography>
     <Divider />
     <Box sx={{ height: '80px', display: 'flex', alignItems: 'center' }}>
@@ -150,7 +173,8 @@ function Empresa({ empresa, documents }){
           Nuevo
         </Button>
     </Box>
-    <NewDocument 
+    <NewDocument
+      listVehicles={vehicles}
       refreshData={refreshData}
       open={openNewModal}
       close={() => handledModal(false)}
@@ -167,11 +191,16 @@ export async function getServerSideProps(context) {
   const documents = await fetch(`${API}/flotilla/documentos/${empresaId}`)
   .then(res => res.json())
   .then(({ documents }) => documents[0])
-  
+
+  const vehicles = await fetch(`${API}/flotilla/vehicles`)
+  .then(res => res.json())
+  .then(({ vehicles }) => vehicles)
+
   return {
     props: {
       empresa: documents.name,
-      documents: documents
+      documents: documents,
+      vehicles: vehicles
     }
   }
 }
