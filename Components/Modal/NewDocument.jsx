@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useMemo } from 'react'
-import { Modal, Drawer, TextField, Box, InputLabel, Select, MenuItem, FormControl, Button } from '@mui/material'
+import { Drawer, TextField, Box, InputLabel, Select, MenuItem, FormControl, Button, Typography } from '@mui/material'
 import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-
+import NewVehicle from './NewVehicle';
 
 const API = process.env.NEXT_PUBLIC_API
 
@@ -31,11 +31,43 @@ const flexColum = {
 }
 
 
-const NewDocument = ({ open, close, empresaId, folioCount, refreshData }) => {
+const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehicles = [] }) => {
 
   const [type, setType] = useState('');
   const { register, handleSubmit, reset } = useForm();
   const [saveData, setSaveData] = useState(false)
+
+  // modal de nuevo vehiculo
+  const [vehicleSelected, setVehicleSelected] = useState('')
+  const [openNewVehicle, setOpenNewVehicle] = useState(false);
+  const handledNewVehicle = (event) => setOpenNewVehicle(event)
+
+  const selectVehicles = () => {
+    return(
+      <>
+        <InputLabel id="newVehicle">Lista de unidades</InputLabel>
+        <Select
+          labelId="newVehicle"
+          value={vehicleSelected}
+          id="newVehicle"
+          fullWidth
+          onChange={(e) => {
+            console.log(e.target.value)
+            setVehicleSelected(e.target.value)
+          }}
+        >
+          <MenuItem onClick={() => handledNewVehicle(true)} value="" >            
+              <em>Agregar nueva unidad</em>🚛
+          </MenuItem>
+          {
+            listVehicles.map(vehicle => (
+              <MenuItem key={vehicle.id} value={vehicle.placas}>{`${vehicle.placas} - ${vehicle.modelo}`}</MenuItem>
+            ))
+          }
+      </Select>
+    </>
+    )
+  }
 
   const nextFolio = useMemo(() => {
     return folioCount[type] + 1
@@ -45,9 +77,15 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData }) => {
     close();
     reset();
     setType('');
+    setVehicleSelected('');
   }
   
   const onSubmit = async(data) => {
+
+    if(!vehicleSelected) {
+      toast.error('Selecciona un vehiculo')
+      return
+    }
 
     if(!type){
       toast.info('Selecciona un tipo de documento')
@@ -59,6 +97,7 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData }) => {
     const payload = {
       ...data,
         folio,
+        vehicle: vehicleSelected,
         bussiness_cost: empresaId,
       }
     await fetch(`${API}/flotilla/insert?type=${type}`, {
@@ -106,21 +145,15 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData }) => {
                 >
                   <MenuItem value="traslado">Traslado</MenuItem>
                   <MenuItem value="flete">Flete</MenuItem>
+                  <MenuItem value="renta">Renta</MenuItem>
                 </Select>
               </FormControl>
               <Box sx={{
                 overflow: '',
               }}>
 
-              </Box>
-              <TextField
-                label="Vehiculo"
-                name="vehicle"
-                id="vehicle"
-                variant="outlined"
-                fullWidth
-                { ...register("vehicle", { required: true }) }
-              />
+              </Box>                            
+              { selectVehicles() }
               <TextField
                 label="Fecha de solicitud"
                 name="request_date"
@@ -240,7 +273,12 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData }) => {
             </Box>
           </form>
         </Box>
-
+        <NewVehicle
+          open={openNewVehicle}
+          close={handledNewVehicle} 
+          empresaId={empresaId}
+          chivato={refreshData} 
+        />
     </Drawer>
     
   )
