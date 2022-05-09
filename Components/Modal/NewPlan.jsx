@@ -23,7 +23,8 @@ const form = {
   padding: '2px', marginBottom: '20px'
 }
 
-const NewVehicle = ({ open, close, chivato, empresaId }) => {
+const NewPlan = ({ open, close, vehicleID, setPlanByVehicle }) => {
+  // setPlanByVehicle hace un update del array de todos los planes que tiene el vehiculo
 
   const { handleSubmit, register, reset } = useForm();
   const [saveData, setSaveData] = useState(false)
@@ -31,27 +32,27 @@ const NewVehicle = ({ open, close, chivato, empresaId }) => {
   const onSubmit = async (data) => {
     setSaveData(true)
     try{
-      await fetch(`${API}/flotilla/vehiculo/insert`, {
+      await fetch(`${API}/flotilla/plan/insert`, {
         method: 'POST',
         body: JSON.stringify({
           ...data,
-          bussiness_cost: empresaId
+          flotilla: vehicleID
         }),
         headers: {
           'Content-Type': 'application/json'
         }
       })
       .then(res => res.json())
-      .then(({ message }) => {
-        if(message.name === 'MongoError'){
-          throw new Error("Las placas ya existen")
+      .then((response) => {
+        if(response?.message?.name === 'MongoError'){
+          throw new Error("El nombre del plan ya existe")
         } 
 
         toast.success('Vehiculo guardado')
         setSaveData(false)
         close() 
         reset()
-        chivato()
+        setPlanByVehicle(response.planes)
 
       })      
 
@@ -75,11 +76,12 @@ const NewVehicle = ({ open, close, chivato, empresaId }) => {
       <Box sx={{ ...style }} p={2}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Typography variant="h6" sx={{ ...form }}>
-            Crear Nuevo Vehículo
+            Crear Nuevo Plan
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <TextField label="Placas" {...register('placas', { required: true })} sx={{ ...form }} />
-            <TextField label="Modelo" {...register('modelo', { required: true })} sx={{ ...form }} />
+            <TextField label="Nombre" {...register('planName', { required: true })} sx={{ ...form }} />
+            <TextField label="Descripción" {...register('planDescription', { required: true })} sx={{ ...form }} />
+            <TextField label="Precio" type="number" {...register('planPrice', { required: true })} sx={{ ...form }} />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
             <Button variant="outlined" onClick={() => onClose()}>Cancelar</Button>
@@ -92,4 +94,4 @@ const NewVehicle = ({ open, close, chivato, empresaId }) => {
   )
 }
 
-export default NewVehicle;
+export default NewPlan;

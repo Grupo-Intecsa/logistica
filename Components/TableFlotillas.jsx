@@ -3,8 +3,13 @@ import { DataGrid } from '@mui/x-data-grid';
 
 export default function TableFlotillas({ columns, rows, setSelectedRow }) {
 
-  const handleRowClick = (row) => {
-    setSelectedRow(row);    
+  const handleRowClick = ([row]) => {
+    const rowSelected = rows.find(r => r._id === row)
+    if (row) {
+      setSelectedRow([rowSelected]);
+      return
+    }
+    setSelectedRow([]);
   }
   
   return (

@@ -4,67 +4,10 @@ import TableFlotillas from '../Components/TableFlotillas'
 import NewDocument from '../Components/Modal/NewDocument';
 import { useRouter } from 'next/router'
 import dayjs from 'dayjs';
+import { columnsDocumentosFlotillas as columns } from '../utils/columnsTables.js'
+import getPDF from '../utils/getPDF.js'
 
 function Empresa({ empresa, documents, vehicles }){
-  
-  const columns = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      hide: true
-    },
-    {
-      field: 'folio',
-      headerName: 'Folio',
-      width: 100,
-    },
-    {
-      field: 'type',
-      headerName: 'Tipo Documento',
-      width: 200,
-    },
-    {
-      field: 'request_date',
-      headerName: 'Fecha Solicitud',
-      width: 150,
-      type: 'date',
-    },
-    {
-      field: 'delivery_date',
-      headerName: 'Fecha Disperción',
-      width: 150,
-      type: 'date',
-    },
-    {
-      field: 'driver',
-      headerName: 'Conductor',
-      width: 200,
-    },
-    {
-      field: 'vehicle',
-      headerName: 'Vehiculo',
-      width: 200,
-    },
-    {
-      field: 'document_id',
-      headerName: 'Folio ADMINPAQ',
-      width: 150,
-      sortable: false,
-    },
-    {
-      field: 'project_id',
-      headerName: 'Folio Proyecto',
-      width: 150,
-      sortable: false,
-    },
-    {
-      field: 'route',
-      headerName: 'Ruta',
-      width: 150,
-      sortable: false,
-    },
-
-  ];
 
   const [selectedRow, setSelectedRow] = useState([]);  
   const getRowData = () => {
@@ -135,6 +78,11 @@ function Empresa({ empresa, documents, vehicles }){
     router.replace(router.asPath)
   }
 
+  const handledCreateDocument = async() => {
+    const data = selectedRow.length !== 0 ? selectedRow[0] : null
+    await getPDF({ id: data._id, type: data.type })
+  }
+
   return (
   <>
     <Typography variant='h3' sx={{ margin: '2.5rem 0', fontWeight: '500' }}>      
@@ -146,7 +94,7 @@ function Empresa({ empresa, documents, vehicles }){
     <Divider />
     <Box sx={{ height: '80px', display: 'flex', alignItems: 'center' }}>
       {
-        selectedRow.length === 1 && <Button variant="contained" color="primary">Imprimir Salida</Button>
+        selectedRow.length === 1 && <Button onClick={handledCreateDocument} variant="contained" color="primary">Imprimir Salida</Button>
       }
       {
         selectedRow.length > 1 && <Button variant="contained" color="primary">Descargar Excel</Button>

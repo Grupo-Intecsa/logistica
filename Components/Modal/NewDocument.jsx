@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Drawer, TextField, Box, InputLabel, Select, MenuItem, FormControl, Button, Typography } from '@mui/material'
 import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import NewVehicle from './NewVehicle';
+import NewPlan from './NewPlan';
 
 const API = process.env.NEXT_PUBLIC_API
 
@@ -34,13 +35,46 @@ const flexColum = {
 const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehicles = [] }) => {
 
   const [type, setType] = useState('');
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, watch } = useForm();
   const [saveData, setSaveData] = useState(false)
+
+  const dateRequest = watch('request_date')
+  const dateDelivery = watch('delivery_date')
+  const planWatchSelected = watch('plan')
 
   // modal de nuevo vehiculo
   const [vehicleSelected, setVehicleSelected] = useState('')
   const [openNewVehicle, setOpenNewVehicle] = useState(false);
   const handledNewVehicle = (event) => setOpenNewVehicle(event)
+
+  const getVehicleBySlug = async (slug) => {
+    const response = await fetch(`${API}/flotilla/planes/slug/${slug}`)
+    .then(res => res.json())
+    .then(({ planes }) => planes)
+
+    return response
+  }
+  
+  const [planByVehicle, setPlanByVehicle] = useState([])
+  // almacena los planes por vehiculo seleccionado
+  useEffect(() => {
+    if (vehicleSelected) {
+      getVehicleBySlug(vehicleSelected)
+      .then(planes => {
+        setPlanByVehicle(planes)
+      })
+    }
+  }, [vehicleSelected])
+
+  const getIdVehicle = useMemo(() => {
+    if (vehicleSelected) {
+      const vehicle = listVehicles?.find(item => item.placas === vehicleSelected)
+      return vehicle?._id    
+    }
+    }, [vehicleSelected])
+  
+  const [newPlan, setNewPlan] = useState(false)
+  const handledNewPlan = (event) => setNewPlan(event)
 
   const selectVehicles = () => {
     return(
@@ -52,7 +86,6 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
           id="newVehicle"
           fullWidth
           onChange={(e) => {
-            console.log(e.target.value)
             setVehicleSelected(e.target.value)
           }}
         >
@@ -93,10 +126,12 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
     }
 
     setSaveData(true)
+    const planSelected = planByVehicle.find(item => item._id === planWatchSelected)
     const folio = nextFolio
     const payload = {
       ...data,
         folio,
+        description: planSelected,
         vehicle: vehicleSelected,
         bussiness_cost: empresaId,
       }
@@ -154,6 +189,28 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
 
               </Box>                            
               { selectVehicles() }
+              {
+                vehicleSelected &&
+                <FormControl fullWidth>
+                <InputLabel id="type">Elije tu plan</InputLabel>
+                <Select
+                  labelId="plan"
+                  id="plan"                  
+                  fullWidth
+                  label="Elije tu plan"
+                  {...register('plan', { required: true })}
+                >
+                  <MenuItem onClick={() => handledNewPlan(true)} value="" >
+                    <em>Agregar nueva plan</em>🚛
+                  </MenuItem>
+                  {
+                    planByVehicle.length > 0
+                    ? planByVehicle.map(plan => <MenuItem key={plan._id} value={plan._id}>{`${plan.planName} - $${plan.planPrice} PESOS`}</MenuItem>)
+                    : <MenuItem value="">No hay planes</MenuItem>
+                  }
+                </Select>                
+              </FormControl>
+              }
               <TextField
                 label="Fecha de solicitud"
                 name="request_date"
@@ -161,13 +218,13 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
                 variant="outlined"
                 fullWidth
                 type="date"
-                value={dayjs().format('YYYY-MM-DD')}
+                value={dateRequest ? dayjs().format(dateRequest) : dayjs().format('YYYY-MM-DD')}
                 { ...register("request_date", { required: true }) }
               />
               <TextField
                 label="Fecha de disperción"
                 name="delivery_date"
-                value={dayjs().format('YYYY-MM-DD')}
+                value={dateDelivery ? dayjs().format(dateDelivery) : dayjs().format('YYYY-MM-DD')}
                 id="delivery_date"
                 variant="filled"
                 fullWidth
@@ -278,6 +335,12 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
           close={handledNewVehicle} 
           empresaId={empresaId}
           chivato={refreshData} 
+        />
+        <NewPlan
+          open={newPlan}
+          close={handledNewPlan}
+          vehicleID={getIdVehicle}
+          setPlanByVehicle={setPlanByVehicle}
         />
     </Drawer>
     
