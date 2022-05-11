@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Typography, Box, Divider, Button } from '@mui/material'
 import TableFlotillas from '../Components/TableFlotillas'
 import NewDocument from '../Components/Modal/NewDocument';
+import PrevPDFModal from '../Components/Modal/PrevPDFModal';
 import { useRouter } from 'next/router'
 import dayjs from 'dayjs';
 import { columnsDocumentosFlotillas as columns } from '../utils/columnsTables.js'
@@ -83,6 +84,16 @@ function Empresa({ empresa, documents, vehicles }){
     await getPDF({ id: data._id, type: data.type })
   }
 
+  const [modalPreview, setModalPreview] = useState(false);
+  const handledPreviewDocument = ({ event, id = 0, type = 0}) => {
+    setModalPreview({
+      open: event,
+      id,
+      type
+    })
+  }
+
+
   return (
   <>
     <Typography variant='h3' sx={{ margin: '2.5rem 0', fontWeight: '500' }}>      
@@ -94,7 +105,24 @@ function Empresa({ empresa, documents, vehicles }){
     <Divider />
     <Box sx={{ height: '80px', display: 'flex', alignItems: 'center' }}>
       {
-        selectedRow.length === 1 && <Button onClick={handledCreateDocument} variant="contained" color="primary">Imprimir Salida</Button>
+        selectedRow.length === 1 && (
+          <Box>
+            <Button onClick={handledCreateDocument} variant="contained" color="secondary">Descargar</Button>
+            { ' ' }
+            <Button 
+              onClick={() => {
+                handledPreviewDocument({
+                  event: true,
+                  id: selectedRow[0].id,
+                  type: selectedRow[0].type 
+                })
+              }}
+              variant="contained"
+              color="primary">
+                Vista Previa
+            </Button>
+          </Box>
+        )
       }
       {
         selectedRow.length > 1 && <Button variant="contained" color="primary">Descargar Excel</Button>
@@ -128,6 +156,11 @@ function Empresa({ empresa, documents, vehicles }){
       close={() => handledModal(false)}
       empresaId={documents._id}
       folioCount={folioCount()}
+    />
+    <PrevPDFModal
+      open={modalPreview.open}
+      close={() => handledPreviewDocument({ event: false })}
+      modalPreview={modalPreview}
     />
   </>
   )
