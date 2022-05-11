@@ -31,6 +31,7 @@ const validTypes = {
 
 function PrevPDFModal({ open, close, modalPreview }) {
 
+  // add cors to fetch
     const { id, type } = modalPreview
     console.log(id, type, 'duaLipa')
     const [loading, setLoading] = useState(null)
@@ -40,7 +41,8 @@ function PrevPDFModal({ open, close, modalPreview }) {
       // preview pdf blob data
       await fetch(`${API}/flotilla/plan/print/${id}?type=${validTypes[type]}`, {
         headers: { 'Content-Type': 'application/json' },
-        method: 'GET',
+
+        method: 'POST',
       })
       .then(res => {
         res
