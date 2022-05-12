@@ -7,15 +7,13 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import NewVehicle from './NewVehicle';
 import NewPlan from './NewPlan';
-import { useGlobalState } from '../../context/GlobalContext'
-
 
 const API = process.env.NEXT_PUBLIC_API
 
 const style = {  
   width: "100%",
   height: "100%",
-  bgcolor: 'background.paper',
+  backgroundColor: "#FBFCDD",
   borderRadius: '4px',
   overflow: 'auto',
   boxShadow: 24,    pt: 2,
@@ -34,12 +32,28 @@ const flexColum = {
 }
 
 
-const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehicles = [] }) => {
+const DocumentoRelacionado = ({ open, close, empresaId, folioCount, refreshData, listVehicles = [], prevData }) => {
+  console.log({
+    empresaId, folioCount, refreshData, listVehicles, prevData
+  })
 
-  const { saveLastDocuments } = useGlobalState()
+  const [lasFolio, setLastFolio] = useState(null)
+  useEffect(() => {
+    if (typeof folioCount === 'function') {
+      setLastFolio(folioCount())
+    }
+  }, [folioCount])
+
+  console.log(lasFolio, 'lasFolio')
+
 
   const [type, setType] = useState('');
-  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm({
+    defaultValues: {
+      ...prevData,
+    }
+  });
+  console.log(errors, 'errors')
   const [saveData, setSaveData] = useState(false)
 
   const dateRequest = watch('request_date')
@@ -139,7 +153,6 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
         vehicle: vehicleSelected,
         bussiness_cost: empresaId,
       }
-    saveLastDocuments([payload])
     await fetch(`${API}/flotilla/insert?type=${type}`, {
       method: 'POST',
       headers: {
@@ -164,7 +177,7 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
     <Drawer
       open={open}
       onClose={handleClose}
-      anchor="right"
+      anchor="left"
     >
         <Box sx={{ ...style }}> 
           <form style={{
@@ -355,4 +368,4 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
   )
 }
 
-export default NewDocument;
+export default DocumentoRelacionado;
