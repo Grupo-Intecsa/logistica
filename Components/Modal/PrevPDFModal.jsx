@@ -41,7 +41,6 @@ function PrevPDFModal({ open, close, modalPreview }) {
       // preview pdf blob data
       await fetch(`${API}/flotilla/plan/print/${id}?type=${validTypes[type]}`, {
         headers: { 'Content-Type': 'application/json' },
-
         method: 'POST',
       })
       .then(res => {
@@ -61,7 +60,7 @@ function PrevPDFModal({ open, close, modalPreview }) {
     useEffect(async() => {
       setLoading(true)
       await pdfCreator()
-    },[id])
+    },[])
 
   return(
     <Modal

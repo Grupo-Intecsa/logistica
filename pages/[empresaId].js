@@ -4,9 +4,10 @@ import TableFlotillas from '../Components/TableFlotillas'
 import NewDocument from '../Components/Modal/NewDocument';
 import PrevPDFModal from '../Components/Modal/PrevPDFModal';
 import { useRouter } from 'next/router'
+import NewDocumentIncomming from '../Components/Modal/NewDocumentIncomming';
 import dayjs from 'dayjs';
-import { columnsDocumentosFlotillas as columns } from '../utils/columnsTables.js'
 import getPDF from '../utils/getPDF.js'
+import { columnsDocumentosFlotillas as columns } from '../utils/columnsTables.js'
 
 function Empresa({ empresa, documents, vehicles }){
 
@@ -157,10 +158,22 @@ function Empresa({ empresa, documents, vehicles }){
       empresaId={documents._id}
       folioCount={folioCount()}
     />
-    <PrevPDFModal
-      open={modalPreview.open}
-      close={() => handledPreviewDocument({ event: false })}
-      modalPreview={modalPreview}
+    {
+      modalPreview.open && (
+        <PrevPDFModal
+          open={modalPreview.open}
+          close={() => handledPreviewDocument({ event: false })}
+          modalPreview={modalPreview}
+        />
+      )
+    }
+    <NewDocumentIncomming
+      listVehicles={vehicles}
+      refreshData={refreshData}
+      open={openNewModal}
+      close={() => handledModal(false)}
+      empresaId={documents._id}
+      folioCount={folioCount()}
     />
   </>
   )
