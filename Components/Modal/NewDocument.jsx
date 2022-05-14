@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import NewVehicle from './NewVehicle';
 import NewPlan from './NewPlan';
 import { useGlobalState } from '../../context/GlobalContext'
+import EMPRESAS from '../../lib/empresas.json'
 
 
 const API = process.env.NEXT_PUBLIC_API
@@ -34,7 +35,7 @@ const flexColum = {
 }
 
 
-const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehicles = [] }) => {
+const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] }) => {
 
   const { saveLastDocuments } = useGlobalState()
 
@@ -82,9 +83,10 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
 
   const selectVehicles = () => {
     return(
-      <>
+      <FormControl fullWidth>
         <InputLabel id="newVehicle">Lista de unidades</InputLabel>
         <Select
+          label="Lista de unidades"
           labelId="newVehicle"
           value={vehicleSelected}
           id="newVehicle"
@@ -94,7 +96,7 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
           }}
         >
           <MenuItem onClick={() => handledNewVehicle(true)} value="" >            
-              <em>Agregar nueva unidad</em>🚛
+          🚛<em>Agregar nueva unidad</em>
           </MenuItem>
           {
             listVehicles.map(vehicle => (
@@ -102,13 +104,13 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
             ))
           }
       </Select>
-    </>
+    </FormControl>
     )
   }
 
-  const nextFolio = useMemo(() => {
-    return folioCount[type] + 1
-  }, [type])
+  // const nextFolio = useMemo(() => {
+  //   return folioCount[type] + 1
+  // }, [type])
 
   const handleClose = () => {
     close();
@@ -131,10 +133,8 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
 
     setSaveData(true)
     const planSelected = planByVehicle.find(item => item._id === planWatchSelected)
-    const folio = nextFolio
     const payload = {
       ...data,
-        folio,
         description: planSelected,
         vehicle: vehicleSelected,
         bussiness_cost: empresaId,
@@ -205,7 +205,7 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
                   {...register('plan', { required: true })}
                 >
                   <MenuItem onClick={() => handledNewPlan(true)} value="" >
-                    <em>Agregar nueva plan</em>🚛
+                  ✖️<em>Agregar nuevo plan</em>
                   </MenuItem>
                   {
                     planByVehicle.length > 0
@@ -215,6 +215,25 @@ const NewDocument = ({ open, close, empresaId, folioCount, refreshData, listVehi
                 </Select>                
               </FormControl>
               }
+              <FormControl fullWidth>
+                <InputLabel id="client">Cliente</InputLabel>
+              <Select
+                labelId="client"
+                label="Cliente"
+                id="client"                
+                {...register('client', { required: true })}
+              >
+                {
+                  EMPRESAS
+                  .filter(item => item._id !== empresaId)
+                  .map(empresa => {
+                    return (
+                      <MenuItem key={empresa._id} value={empresa._id}>{empresa.name}</MenuItem>
+                    )
+                  })
+                }
+              </Select>
+              </FormControl>              
               <TextField
                 label="Fecha de solicitud"
                 name="request_date"

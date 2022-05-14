@@ -32,19 +32,10 @@ const flexColum = {
 }
 
 
-const DocumentoRelacionado = ({ open, close, empresaId, folioCount, refreshData, listVehicles = [], prevData }) => {
+const DocumentoRelacionado = ({ open, close, empresaId, refreshData, listVehicles = [], prevData }) => {
   console.log({
-    empresaId, folioCount, refreshData, listVehicles, prevData
+    empresaId, refreshData, listVehicles, prevData
   })
-
-  const [lasFolio, setLastFolio] = useState(null)
-  useEffect(() => {
-    if (typeof folioCount === 'function') {
-      setLastFolio(folioCount())
-    }
-  }, [folioCount])
-
-  console.log(lasFolio, 'lasFolio')
 
 
   const [type, setType] = useState('');
@@ -120,9 +111,9 @@ const DocumentoRelacionado = ({ open, close, empresaId, folioCount, refreshData,
     )
   }
 
-  const nextFolio = useMemo(() => {
-    return folioCount[type] + 1
-  }, [type])
+  // const nextFolio = useMemo(() => {
+  //   return folioCount[type] + 1
+  // }, [type])
 
   const handleClose = () => {
     close();
@@ -145,10 +136,8 @@ const DocumentoRelacionado = ({ open, close, empresaId, folioCount, refreshData,
 
     setSaveData(true)
     const planSelected = planByVehicle.find(item => item._id === planWatchSelected)
-    const folio = nextFolio
     const payload = {
       ...data,
-        folio,
         description: planSelected,
         vehicle: vehicleSelected,
         bussiness_cost: empresaId,
