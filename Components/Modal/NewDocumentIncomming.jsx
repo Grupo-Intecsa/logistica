@@ -7,7 +7,7 @@ import { useGlobalState } from '../../context/GlobalContext';
 import DocumentoRelacionado from './DocumentoRelacionado';
 
 const NewDocumentIncomming = (
-  { empresaId, folioCount, refreshData, listVehicles = [] }
+  { empresaId, refreshData, listVehicles = [] }
 ) => {
 
   const [state, setState] = useState({
@@ -61,7 +61,6 @@ const NewDocumentIncomming = (
         open={openModalRelacionado}
         close={() => setOpenModalRelacionado(false)}
         empresaId={empresaId}
-        folioCount={folioCount}
         prevData={lastDocumentsCreated[0]}
       />
     </>

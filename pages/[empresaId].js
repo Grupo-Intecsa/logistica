@@ -52,25 +52,25 @@ function Empresa({ empresa, documents, vehicles }){
     return [...traslados, ...fletes, ...rentas]
   }
 
-  const folioCount = () => {
-    const traslado = documents.traslado.length !== 0 
-    ? documents.traslado.length
-    : 0
+  // const folioCount = () => {
+  //   const traslado = documents.traslado.length !== 0 
+  //   ? documents.traslado.length
+  //   : 0
 
-    const flete = documents.fletes.length !== 0
-    ? documents.fletes.length
-    : 0
+  //   const flete = documents.fletes.length !== 0
+  //   ? documents.fletes.length
+  //   : 0
 
-    const renta = documents.rentas.length !== 0
-    ? documents.rentas.length
-    : 0    
+  //   const renta = documents.rentas.length !== 0
+  //   ? documents.rentas.length
+  //   : 0    
 
-    return {
-      traslado,
-      flete,
-      renta
-    }
-  }
+  //   return {
+  //     traslado,
+  //     flete,
+  //     renta
+  //   }
+  // }
 
   const [openNewModal, setOpenNewModal] = useState(false);
   const handledModal = (event) => setOpenNewModal(event)
@@ -156,7 +156,6 @@ function Empresa({ empresa, documents, vehicles }){
       open={openNewModal}
       close={() => handledModal(false)}
       empresaId={documents._id}
-      folioCount={folioCount()}
     />
     {
       modalPreview.open && (
@@ -173,7 +172,6 @@ function Empresa({ empresa, documents, vehicles }){
       open={openNewModal}
       close={() => handledModal(false)}
       empresaId={documents._id}
-      folioCount={folioCount()}
     />
   </>
   )
