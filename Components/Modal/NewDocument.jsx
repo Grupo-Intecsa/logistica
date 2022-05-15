@@ -233,7 +233,16 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
                   })
                 }
               </Select>
-              </FormControl>              
+              </FormControl>   
+              <TextField
+                label="Asunto del documento"
+                name="subject"
+                id="subject"
+                variant="outlined"
+                fullWidth
+                type="string"
+                {...register('subject', { required: true })}
+              />
               <TextField
                 label="Fecha de solicitud"
                 name="request_date"
@@ -275,6 +284,14 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
               />
               { errors.route && <small style={{ color: 'red' }}>Este campos es obligatorio</small> }
               <TextField
+                label="Recorrido (Km)"
+                name="recorrido_km"
+                id="recorrido_km"
+                variant="outlined"
+                fullWidth
+                { ...register("recorrido_km", { required: false }) }
+              />
+              <TextField
                 label="Kilometraje de salida"
                 name="kilometer_out"
                 id="kilometer_out"
@@ -282,15 +299,6 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
                 type="number"
                 fullWidth
                 { ...register("kilometer_out", { required: false }) }
-              />
-              <TextField
-                label="Kilometraje de llegada"
-                name="kilometer_in"
-                id="kilometer_in"
-                variant="outlined"
-                type="number"
-                fullWidth
-                { ...register("kilometer_in", { required: false }) }
               />
               <TextField
                 label="Nivel de combustible"
@@ -302,7 +310,7 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
                 { ...register("fuel_level", { required: false }) }
               />
               <TextField
-                label="Folio Documento de traslado"
+                label="Salida de almacén (ADMIN/COMERCIAL)"
                 name="document_id"
                 id="document_id"
                 variant="outlined"
@@ -328,14 +336,23 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
                 { ...register("fuel_card", { required: false }) }
               />
               <TextField
+                label="Carga de combustible"
+                name="fuel_amount"
+                id="fuel_amount"
+                variant="outlined"
+                type="text"
+                fullWidth
+                { ...register("fuel_amount", { required: false }) }
+              />
+              <TextField
                 maxRows={4}
-                label="Observaciones"
+                label="Link Google Maps"
                 name="observations"
-                id="observations"
+                id="link_googlemaps"
                 variant="outlined"
                 fullWidth
-                type="textArea"
-                { ...register("observations", { required: false }) }
+                type="text"
+                { ...register("link_googlemaps", { required: false }) }
               />            
             </Box>
             <Box sx={{ display: 'flex', gap: "1.25rem", margin: '10px', justifyContent: 'center' }}>
