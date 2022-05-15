@@ -4,10 +4,18 @@ import TableFlotillas from '../Components/TableFlotillas'
 import NewDocument from '../Components/Modal/NewDocument';
 import PrevPDFModal from '../Components/Modal/PrevPDFModal';
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import NewDocumentIncomming from '../Components/Modal/NewDocumentIncomming';
 import dayjs from 'dayjs';
 import getPDF from '../utils/getPDF.js'
 import { columnsDocumentosFlotillas as columns } from '../utils/columnsTables.js'
+import ShareButton from '../utils/ShareButton';
+
+const validTypes = {
+  'Traslado': 'traslado',
+  'Flete': 'flete',
+  'Renta': 'renta',
+}
 
 function Empresa({ empresa, documents, vehicles }){
 
@@ -79,12 +87,7 @@ function Empresa({ empresa, documents, vehicles }){
   const refreshData = () => {
     router.replace(router.asPath)
   }
-
-  const handledCreateDocument = async() => {
-    const data = selectedRow.length !== 0 ? selectedRow[0] : null
-    await getPDF({ id: data._id, type: data.type })
-  }
-
+  
   const [modalPreview, setModalPreview] = useState(false);
   const handledPreviewDocument = ({ event, id = 0, type = 0}) => {
     setModalPreview({
@@ -107,9 +110,7 @@ function Empresa({ empresa, documents, vehicles }){
     <Box sx={{ height: '80px', display: 'flex', alignItems: 'center' }}>
       {
         selectedRow.length === 1 && (
-          <Box>
-            <Button onClick={handledCreateDocument} variant="contained" color="secondary">Descargar</Button>
-            { ' ' }
+          <Box>{ ' ' }
             <Button 
               onClick={() => {
                 handledPreviewDocument({
@@ -121,7 +122,11 @@ function Empresa({ empresa, documents, vehicles }){
               variant="contained"
               color="primary">
                 Vista Previa
-            </Button>
+            </Button>{ ' ' }
+            <ShareButton 
+              id={selectedRow[0].id}
+              type={validTypes[selectedRow[0].type]}
+            />            
           </Box>
         )
       }
