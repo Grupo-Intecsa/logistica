@@ -4,7 +4,7 @@ const ShareButton = ({ id, type }) => {
   const shareData = {
     title: "Flotilla",
     text: 'Recuerda que el link de descarga es único para cada documento y puedes consultarlos las veces que quieras.',
-    url: `https://logistica-chi.vercel.app/flotilla/${id}/${type}`,
+    url: `https://logistica-sage.vercel.app/flotilla/${id}/${type}`,
   }
 
   const handleShare = async() => {
