@@ -3,7 +3,7 @@ import { Button } from '@mui/material'
 const ShareButton = ({ id, type }) => {
   const shareData = {
     title: "Flotilla",
-    text: 'Recuerda que el link de descarga es único para cada documento y puedes consultarlos las veces que quieras.',
+    text: 'Recurso de logistica',
     url: `https://logistica-sage.vercel.app/flotilla/${id}/${type}`,
   }
 

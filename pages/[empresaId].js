@@ -4,10 +4,10 @@ import TableFlotillas from '../Components/TableFlotillas'
 import NewDocument from '../Components/Modal/NewDocument';
 import PrevPDFModal from '../Components/Modal/PrevPDFModal';
 import { useRouter } from 'next/router'
-import Link from 'next/link'
-import NewDocumentIncomming from '../Components/Modal/NewDocumentIncomming';
+// import Link from 'next/link'
+// import NewDocumentIncomming from '../Components/Modal/NewDocumentIncomming';
 import dayjs from 'dayjs';
-import getPDF from '../utils/getPDF.js'
+// import getPDF from '../utils/getPDF.js'
 import { columnsDocumentosFlotillas as columns } from '../utils/columnsTables.js'
 import ShareButton from '../utils/ShareButton';
 
@@ -171,13 +171,13 @@ function Empresa({ empresa, documents, vehicles }){
         />
       )
     }
-    <NewDocumentIncomming
+    {/* <NewDocumentIncomming
       listVehicles={vehicles}
       refreshData={refreshData}
       open={openNewModal}
       close={() => handledModal(false)}
       empresaId={documents._id}
-    />
+    /> */}
   </>
   )
 }

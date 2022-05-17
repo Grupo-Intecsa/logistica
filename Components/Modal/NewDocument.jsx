@@ -46,6 +46,9 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
   const dateRequest = watch('request_date')
   const dateDelivery = watch('delivery_date')
   const planWatchSelected = watch('plan')
+  const clientWatchSelected = watch('client')
+
+  console.log(clientWatchSelected, 'clientWatchSelected')
 
   // modal de nuevo vehiculo
   const [vehicleSelected, setVehicleSelected] = useState('')
@@ -107,7 +110,6 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
     </FormControl>
     )
   }
-
   // const nextFolio = useMemo(() => {
   //   return folioCount[type] + 1
   // }, [type])
@@ -224,13 +226,21 @@ const NewDocument = ({ open, close, empresaId, refreshData, listVehicles = [] })
                 {...register('client', { required: true })}
               >
                 {
-                  EMPRESAS
-                  .filter(item => item._id !== empresaId)
-                  .map(empresa => {
-                    return (
-                      <MenuItem key={empresa._id} value={empresa._id}>{empresa.name}</MenuItem>
-                    )
-                  })
+                  type === 'traslado' 
+                    ? EMPRESAS
+                    .filter(empresa => empresa._id === empresaId)
+                    .map(empresa => {
+                      return (
+                        <MenuItem key={empresa._id} value={empresa._id}>{empresa.name}</MenuItem>
+                      )
+                    })
+                    : EMPRESAS
+                      .filter(item => item._id !== empresaId)
+                      .map(empresa => {
+                        return (
+                          <MenuItem key={empresa._id} value={empresa._id}>{empresa.name}</MenuItem>
+                        )
+                      })
                 }
               </Select>
               </FormControl>   
